@@ -1,0 +1,48 @@
+name: PR Review Timeline (dogfood)
+
+on:
+  # Safer for forks: runs in base repo context
+  pull_request_target:
+    types: [opened, reopened, synchronize, review_requested, ready_for_review, closed]
+  # Also run on regular PRs within the same repo
+  pull_request:
+    types: [opened, reopened, synchronize, review_requested, ready_for_review, closed]
+
+concurrency:
+  # Prevent races updating the PR body
+  group: ${{ github.workflow }}-${{ github.event.pull_request.id || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  timeline:
+    runs-on: ubuntu-latest
+    permissions:
+      # Minimal permissions to update PR body and read contents
+      pull-requests: write
+      contents: read
+    steps:
+      # Checkout THIS repo's base branch so `uses: ./` loads the action from this repository
+      - name: Checkout base repo
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          persist-credentials: false
+
+      - name: PR Review Timeline (local)
+        uses: ./
+        id: timeline
+        with:
+          github-token: ${{ github.token }}
+          # Optional: skip draft PRs (closed/merged are always skipped by the action)
+          skip-draft: true
+
+      - name: Save timeline JSON
+        run: |
+          echo '${{ steps.timeline.outputs.timeline-json }}' > timeline.json
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-review-timeline
+          path: timeline.json
+          retention-days: 7

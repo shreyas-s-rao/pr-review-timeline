@@ -1,0 +1,27 @@
+name: PR Review Timeline
+description: Visualize PR review participation timelines as a Mermaid Gantt chart on the PR description body.
+author: Shreyas Rao
+
+branding:
+  icon: 'bar-chart-2'
+  color: 'orange'
+
+inputs:
+  github-token:
+    description: GitHub token
+    required: false
+    default: ${{ github.token }}
+  skip-draft:
+    description: Skip draft PRs
+    required: false
+    default: "true"
+
+runs:
+  using: node20
+  main: dist/index.js
+
+outputs:
+  timeline-json:
+    description: JSON reviewer windows for the PR
+  timeline-mermaid:
+    description: Mermaid Gantt diagram for the PR

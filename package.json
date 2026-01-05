@@ -1,0 +1,22 @@
+{
+  "name": "pr-review-timeline",
+  "version": "0.1.0",
+  "private": true,
+  
+  "scripts": {
+    "build": "ncc build src/index.ts -o dist",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "build:lib": "tsc -p tsconfig.lib.json",
+    "test": "npm run build:lib && node scripts/test.mjs"
+  },
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/github": "^6.0.0",
+    "dayjs": "^1.11.11"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.38.1",
+    "typescript": "^5.3.3"
+  }
+}
