@@ -68,7 +68,7 @@ async function run() {
       .addHeading("Reviewer Windows", 2)
       .addList(reviewerWindows.map(w => `@${w.reviewer}: ${w.start} (${w.startReason}) -> ${w.end} (${w.endReason})`))
       .addHeading("Mermaid Diagram", 2)
-      .addCodeBlock(gantt, "mermaid")
+      .addCodeBlock(gantt, "text")
       .write();
 
     await updatePrBody(octokit, ctx.repo, pr, gantt);
