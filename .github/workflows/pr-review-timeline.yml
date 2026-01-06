@@ -3,10 +3,13 @@ name: PR Review Timeline (dogfood)
 on:
   # Safer for forks: runs in base repo context
   pull_request_target:
-    types: [opened, reopened, synchronize, review_requested, ready_for_review, closed]
+    types: [opened, reopened, review_requested, assigned, ready_for_review, closed]
   # Also run on regular PRs within the same repo
   pull_request:
-    types: [opened, reopened, synchronize, review_requested, ready_for_review, closed]
+    types: [opened, reopened, review_requested, assigned, ready_for_review, closed]
+  # Trigger when a review is submitted (e.g., approvals/changes requested)
+  pull_request_review:
+    types: [submitted, dismissed]
 
 concurrency:
   # Prevent races updating the PR body

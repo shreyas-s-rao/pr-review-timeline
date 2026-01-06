@@ -36,11 +36,14 @@ name: PR Review Timeline
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize, review_requested, closed]
+    types: [opened, reopened, review_requested, assigned, ready_for_review, closed]
+  # Trigger when a review is submitted (approvals / changes requested / comments)
+  pull_request_review:
+    types: [submitted, dismissed]
   # For forked PRs: run in base repo context, safer for writes
   # Do not checkout or execute fork code in this job
   pull_request_target:
-    types: [opened, reopened, synchronize, review_requested, closed]
+    types: [opened, reopened, review_requested, assigned, ready_for_review, closed]
 
 jobs:
   timeline:
