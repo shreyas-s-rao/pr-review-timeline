@@ -50,7 +50,7 @@ jobs:
       pull-requests: write
       contents: read
     steps:
-      - uses: shreyas-s-rao/pr-review-timeline@v0.1.0
+      - uses: shreyas-s-rao/pr-review-timeline@v0.1.5
         id: timeline
         with:
           # Optional: override token (defaults to ${{ github.token }})
