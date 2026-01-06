@@ -29939,10 +29939,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.renderGantt = renderGantt;
+exports.renderMermaidDiagram = renderMermaidDiagram;
 const dayjs_1 = __importDefault(__nccwpck_require__(3706));
+// Render only the Mermaid Gantt body (no code fences)
 function renderGantt(windows) {
     const lines = [];
-    lines.push("```mermaid");
     lines.push("gantt");
     lines.push("  title PR Review Timeline");
     lines.push("  dateFormat  YYYY-MM-DD");
@@ -29952,8 +29953,12 @@ function renderGantt(windows) {
         const end = w.end ?? (0, dayjs_1.default)().format("YYYY-MM-DD");
         lines.push(`  @${w.reviewer} : ${w.start}, ${end}`);
     }
-    lines.push("```");
     return lines.join("\n");
+}
+// Wrap the Gantt body in a fenced Mermaid code block for markdown contexts (PR body, README, etc.)
+function renderMermaidDiagram(windows) {
+    const body = renderGantt(windows);
+    return ["```mermaid", body, "```"].join("\n");
 }
 
 
@@ -30137,9 +30142,10 @@ async function run() {
         const rawData = await (0, github_js_1.fetchReviewTimelineData)(octokit, ctx.repo, pr);
         const reviewerWindows = (0, model_js_1.buildReviewerWindows)(rawData);
         const gantt = (0, gantt_js_1.renderGantt)(reviewerWindows);
+        const mermaidBlock = (0, gantt_js_1.renderMermaidDiagram)(reviewerWindows);
         // Set outputs for downstream steps (JSON + Mermaid)
         core.setOutput("timeline-json", JSON.stringify(reviewerWindows));
-        core.setOutput("timeline-mermaid", gantt);
+        core.setOutput("timeline-mermaid", mermaidBlock);
         // Logs for visibility in job output
         core.info(`Computed ${reviewerWindows.length} reviewer windows`);
         for (const w of reviewerWindows) {
@@ -30151,9 +30157,9 @@ async function run() {
             .addHeading("Reviewer Windows", 2)
             .addList(reviewerWindows.map(w => `@${w.reviewer}: ${w.start} (${w.startReason}) -> ${w.end} (${w.endReason})`))
             .addHeading("Mermaid Diagram", 2)
-            .addCodeBlock(gantt, "text")
+            .addCodeBlock(gantt, "mermaid")
             .write();
-        await (0, pr_body_js_1.updatePrBody)(octokit, ctx.repo, pr, gantt);
+        await (0, pr_body_js_1.updatePrBody)(octokit, ctx.repo, pr, mermaidBlock);
     }
     catch (err) {
         core.setFailed(err.message);

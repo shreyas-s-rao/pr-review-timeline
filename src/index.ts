@@ -2,7 +2,7 @@ import * as core from "@actions/core";
 import * as github from "@actions/github";
 import { fetchReviewTimelineData } from "./github.js";
 import { buildReviewerWindows } from "./model.js";
-import { renderGantt } from "./gantt.js";
+import { renderGantt, renderMermaidDiagram } from "./gantt.js";
 import { updatePrBody } from "./pr-body.js";
 
 // Node env typing is not included by default; declare for local runs
@@ -51,10 +51,11 @@ async function run() {
     const rawData = await fetchReviewTimelineData(octokit, ctx.repo, pr);
     const reviewerWindows = buildReviewerWindows(rawData);
     const gantt = renderGantt(reviewerWindows);
+    const mermaidBlock = renderMermaidDiagram(reviewerWindows);
 
     // Set outputs for downstream steps (JSON + Mermaid)
     core.setOutput("timeline-json", JSON.stringify(reviewerWindows));
-    core.setOutput("timeline-mermaid", gantt);
+    core.setOutput("timeline-mermaid", mermaidBlock);
 
     // Logs for visibility in job output
     core.info(`Computed ${reviewerWindows.length} reviewer windows`);
@@ -68,10 +69,10 @@ async function run() {
       .addHeading("Reviewer Windows", 2)
       .addList(reviewerWindows.map(w => `@${w.reviewer}: ${w.start} (${w.startReason}) -> ${w.end} (${w.endReason})`))
       .addHeading("Mermaid Diagram", 2)
-      .addCodeBlock(gantt, "text")
+      .addCodeBlock(gantt, "mermaid")
       .write();
 
-    await updatePrBody(octokit, ctx.repo, pr, gantt);
+    await updatePrBody(octokit, ctx.repo, pr, mermaidBlock);
   } catch (err: any) {
     core.setFailed(err.message);
   }

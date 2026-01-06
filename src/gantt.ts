@@ -1,10 +1,10 @@
 import dayjs from "dayjs";
 import { ReviewerWindow } from "./model.js";
 
+// Render only the Mermaid Gantt body (no code fences)
 export function renderGantt(windows: ReviewerWindow[]): string {
   const lines: string[] = [];
 
-  lines.push("```mermaid");
   lines.push("gantt");
   lines.push("  title PR Review Timeline");
   lines.push("  dateFormat  YYYY-MM-DD");
@@ -16,7 +16,11 @@ export function renderGantt(windows: ReviewerWindow[]): string {
     lines.push(`  @${w.reviewer} : ${w.start}, ${end}`);
   }
 
-  lines.push("```");
-
   return lines.join("\n");
+}
+
+// Wrap the Gantt body in a fenced Mermaid code block for markdown contexts (PR body, README, etc.)
+export function renderMermaidDiagram(windows: ReviewerWindow[]): string {
+  const body = renderGantt(windows);
+  return ["```mermaid", body, "```"] .join("\n");
 }

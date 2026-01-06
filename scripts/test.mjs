@@ -25,7 +25,7 @@ const { data: pr } = await octokit.rest.pulls.get({ owner, repo, pull_number: pr
 // Use the codebase: fetch data, build windows, render gantt
 const raw = await fetchReviewTimelineData(octokit, { owner, repo }, pr);
 const windows = buildReviewerWindows(raw);
-const mermaid = renderGantt(windows);
+const gantt = renderGantt(windows);
 
 // Debug logging similar to the action's output
 console.log(`Computed ${windows.length} reviewer windows`);
@@ -33,4 +33,4 @@ for (const w of windows) {
   console.log(`@${w.reviewer}: ${w.start} (${w.startReason}) -> ${w.end} (${w.endReason})`);
 }
 
-console.log(mermaid);
+console.log(gantt);
