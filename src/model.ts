@@ -23,9 +23,15 @@ export function buildReviewerWindows(
     let endCandidate: string | null = null;
     let endReasonBase: "approved" | "merged" | "today";
     if (approvedAt && data.prMergedAt) {
-      const approvedIsEarlier = dayjs(approvedAt).isBefore(dayjs(data.prMergedAt));
-      endCandidate = approvedIsEarlier ? approvedAt : data.prMergedAt;
-      endReasonBase = approvedIsEarlier ? "approved" : "merged";
+      if (approvedAt === data.prMergedAt) {
+        // Same day: prefer approval over merge
+        endCandidate = approvedAt;
+        endReasonBase = "approved";
+      } else {
+        const approvedIsEarlier = dayjs(approvedAt).isBefore(dayjs(data.prMergedAt));
+        endCandidate = approvedIsEarlier ? approvedAt : data.prMergedAt;
+        endReasonBase = approvedIsEarlier ? "approved" : "merged";
+      }
     } else if (approvedAt) {
       endCandidate = approvedAt;
       endReasonBase = "approved";

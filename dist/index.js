@@ -30198,9 +30198,16 @@ function buildReviewerWindows(data) {
         let endCandidate = null;
         let endReasonBase;
         if (approvedAt && data.prMergedAt) {
-            const approvedIsEarlier = (0, dayjs_1.default)(approvedAt).isBefore((0, dayjs_1.default)(data.prMergedAt));
-            endCandidate = approvedIsEarlier ? approvedAt : data.prMergedAt;
-            endReasonBase = approvedIsEarlier ? "approved" : "merged";
+            if (approvedAt === data.prMergedAt) {
+                // Same day: prefer approval over merge
+                endCandidate = approvedAt;
+                endReasonBase = "approved";
+            }
+            else {
+                const approvedIsEarlier = (0, dayjs_1.default)(approvedAt).isBefore((0, dayjs_1.default)(data.prMergedAt));
+                endCandidate = approvedIsEarlier ? approvedAt : data.prMergedAt;
+                endReasonBase = approvedIsEarlier ? "approved" : "merged";
+            }
         }
         else if (approvedAt) {
             endCandidate = approvedAt;
