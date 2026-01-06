@@ -30235,7 +30235,7 @@ const START = "<!-- pr-review-timeline:start -->";
 const END = "<!-- pr-review-timeline:end -->";
 async function updatePrBody(octokit, repo, pr, mermaidBlock) {
     const timestamp = new Date().toISOString();
-    const block = `${START}\nLast updated: ${timestamp}\n\n${mermaidBlock}\n${END}`;
+    const block = `${START}\n---\n${mermaidBlock}\nPR review timeline last updated: ${timestamp}\n${END}`;
     let body = pr.body ?? "";
     const regex = new RegExp(`${START}[\\s\\S]*?${END}`, "m");
     if (regex.test(body)) {
