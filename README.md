@@ -55,7 +55,7 @@ jobs:
       # Otherwise use pull-requests: read for compute-only runs
       pull-requests: write
     steps:
-      - uses: shreyas-s-rao/pr-review-timeline@v0.2.0
+      - uses: shreyas-s-rao/pr-review-timeline@v0.2.1
         id: timeline
         with:
           # Optional: override token (default: ${{ github.token }})
