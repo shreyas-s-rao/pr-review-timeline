@@ -30229,10 +30229,12 @@ function buildReviewerWindows(data) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.updatePrBody = updatePrBody;
+// No timezone plugins; use ISO string in UTC
 const START = "<!-- pr-review-timeline:start -->";
 const END = "<!-- pr-review-timeline:end -->";
 async function updatePrBody(octokit, repo, pr, gantt) {
-    const block = `${START}\n${gantt}\n${END}`;
+    const timestamp = new Date().toISOString();
+    const block = `${START}\nLast updated: ${timestamp}\n\n${gantt}\n${END}`;
     let body = pr.body ?? "";
     const regex = new RegExp(`${START}[\\s\\S]*?${END}`, "m");
     if (regex.test(body)) {

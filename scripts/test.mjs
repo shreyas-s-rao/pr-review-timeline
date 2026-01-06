@@ -1,7 +1,7 @@
 import * as github from "@actions/github";
 import githubPkg from "../lib/github.js";
 import modelPkg from "../lib/model.js";
-import ganttPkg from "../lib/gantt.js";
+import ganttPkg, { renderMermaidDiagram } from "../lib/gantt.js";
 const { fetchReviewTimelineData } = githubPkg;
 const { buildReviewerWindows } = modelPkg;
 const { renderGantt } = ganttPkg;
@@ -26,6 +26,7 @@ const { data: pr } = await octokit.rest.pulls.get({ owner, repo, pull_number: pr
 const raw = await fetchReviewTimelineData(octokit, { owner, repo }, pr);
 const windows = buildReviewerWindows(raw);
 const gantt = renderGantt(windows);
+const mermaid = renderMermaidDiagram(windows);
 
 // Debug logging similar to the action's output
 console.log(`Computed ${windows.length} reviewer windows`);
@@ -33,4 +34,7 @@ for (const w of windows) {
   console.log(`@${w.reviewer}: ${w.start} (${w.startReason}) -> ${w.end} (${w.endReason})`);
 }
 
+console.log("Gantt chart:");
 console.log(gantt);
+console.log("Mermaid diagram:");
+console.log(mermaid);

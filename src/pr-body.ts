@@ -1,3 +1,4 @@
+// No timezone plugins; use ISO string in UTC
 const START = "<!-- pr-review-timeline:start -->";
 const END = "<!-- pr-review-timeline:end -->";
 
@@ -5,9 +6,10 @@ export async function updatePrBody(
   octokit: ReturnType<typeof import("@actions/github").getOctokit>,
   repo: { owner: string; repo: string },
   pr: any,
-  gantt: string
+  mermaidBlock: string
 ) {
-  const block = `${START}\n${gantt}\n${END}`;
+  const timestamp = new Date().toISOString();
+  const block = `${START}\nLast updated: ${timestamp}\n\n${mermaidBlock}\n${END}`;
   let body = pr.body ?? "";
 
   const regex = new RegExp(`${START}[\\s\\S]*?${END}`, "m");
