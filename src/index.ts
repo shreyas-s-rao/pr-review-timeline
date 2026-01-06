@@ -29,22 +29,23 @@ async function run() {
 
     const octokit = github.getOctokit(token);
     const pr = ctx.payload.pull_request;
+    const action = (ctx.payload as any).action as string | undefined;
+    const isClosedAction = action === "closed";
 
     // Configurable skip: draft PRs
     const skipDraft = core.getBooleanInput("skip-draft", { required: false });
-    if (skipDraft && pr.draft) {
+    if (skipDraft && pr.draft && !isClosedAction) {
       core.info("Skipping draft PR per configuration");
       return;
     }
 
-    // Always skip closed or merged PRs
-    if (pr.state === "closed") {
-      core.info("Skipping closed PR");
+    // Skip closed/merged on non-finalization events; run once on the closed action to finalize
+    if ((pr.state === "closed" || pr.merged) && !isClosedAction) {
+      core.info("Skipping closed/merged PR on non-finalization event");
       return;
     }
-    if (pr.merged) {
-      core.info("Skipping merged PR");
-      return;
+    if (isClosedAction) {
+      core.info(`Finalizing timeline on closed event (merged=${!!(pr as any).merged})`);
     }
 
     const rawData = await fetchReviewTimelineData(octokit, ctx.repo, pr);
