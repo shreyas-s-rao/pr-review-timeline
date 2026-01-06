@@ -29948,7 +29948,6 @@ function renderGantt(windows) {
     lines.push("  title PR Review Timeline");
     lines.push("  dateFormat  YYYY-MM-DD");
     lines.push("  axisFormat  %d %b");
-    lines.push("");
     lines.push("  section Reviewers");
     for (const w of windows) {
         const end = w.end ?? (0, dayjs_1.default)().format("YYYY-MM-DD");

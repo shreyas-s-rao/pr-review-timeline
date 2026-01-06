@@ -9,7 +9,6 @@ export function renderGantt(windows: ReviewerWindow[]): string {
   lines.push("  title PR Review Timeline");
   lines.push("  dateFormat  YYYY-MM-DD");
   lines.push("  axisFormat  %d %b");
-  lines.push("");
   lines.push("  section Reviewers");
 
   for (const w of windows) {
