@@ -10,6 +10,7 @@ export function renderGantt(windows: ReviewerWindow[]): string {
   lines.push("  dateFormat  YYYY-MM-DD");
   lines.push("  axisFormat  %d %b");
   lines.push("");
+  lines.push("  section Reviewers");
 
   for (const w of windows) {
     const end = w.end ?? dayjs().format("YYYY-MM-DD");

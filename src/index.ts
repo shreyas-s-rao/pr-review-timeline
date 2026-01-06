@@ -62,6 +62,7 @@ async function run() {
     for (const w of reviewerWindows) {
       core.info(`@${w.reviewer}: ${w.start} (${w.startReason}) -> ${w.end} (${w.endReason})`);
     }
+    core.info("Gantt (summary body):\n" + gantt);
 
     // Add a concise job summary with the windows and the Mermaid diagram
     await core.summary

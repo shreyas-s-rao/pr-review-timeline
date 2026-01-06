@@ -29949,6 +29949,7 @@ function renderGantt(windows) {
     lines.push("  dateFormat  YYYY-MM-DD");
     lines.push("  axisFormat  %d %b");
     lines.push("");
+    lines.push("  section Reviewers");
     for (const w of windows) {
         const end = w.end ?? (0, dayjs_1.default)().format("YYYY-MM-DD");
         lines.push(`  @${w.reviewer} : ${w.start}, ${end}`);
@@ -30151,6 +30152,7 @@ async function run() {
         for (const w of reviewerWindows) {
             core.info(`@${w.reviewer}: ${w.start} (${w.startReason}) -> ${w.end} (${w.endReason})`);
         }
+        core.info("Gantt (summary body):\n" + gantt);
         // Add a concise job summary with the windows and the Mermaid diagram
         await core.summary
             .addHeading("PR Review Timeline")
@@ -30232,9 +30234,9 @@ exports.updatePrBody = updatePrBody;
 // No timezone plugins; use ISO string in UTC
 const START = "<!-- pr-review-timeline:start -->";
 const END = "<!-- pr-review-timeline:end -->";
-async function updatePrBody(octokit, repo, pr, gantt) {
+async function updatePrBody(octokit, repo, pr, mermaidBlock) {
     const timestamp = new Date().toISOString();
-    const block = `${START}\nLast updated: ${timestamp}\n\n${gantt}\n${END}`;
+    const block = `${START}\nLast updated: ${timestamp}\n\n${mermaidBlock}\n${END}`;
     let body = pr.body ?? "";
     const regex = new RegExp(`${START}[\\s\\S]*?${END}`, "m");
     if (regex.test(body)) {
