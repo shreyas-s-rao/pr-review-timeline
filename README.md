@@ -54,7 +54,7 @@ jobs:
         id: timeline
         with:
           # Optional: override token (defaults to ${{ github.token }})
-          # github-token: ${{ secrets.MY_PAT }}
+          github-token: ${{ secrets.MY_PAT }}
           # Optional: skip draft PRs
           skip-draft: true
         # Action outputs: timeline-json (reviewer windows), timeline-mermaid (diagram)
