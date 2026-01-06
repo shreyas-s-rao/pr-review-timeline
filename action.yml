@@ -15,6 +15,10 @@ inputs:
     description: Skip draft PRs
     required: false
     default: "true"
+  publish-to-pr:
+    description: Update PR body with Mermaid diagram
+    required: false
+    default: "false"
 
 runs:
   using: node20

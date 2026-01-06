@@ -30125,6 +30125,7 @@ async function run() {
         const pr = ctx.payload.pull_request;
         const action = ctx.payload.action;
         const isClosedAction = action === "closed";
+        const publishToPr = core.getBooleanInput("publish-to-pr", { required: false });
         // Configurable skip: draft PRs
         const skipDraft = core.getBooleanInput("skip-draft", { required: false });
         if (skipDraft && pr.draft && !isClosedAction) {
@@ -30160,7 +30161,12 @@ async function run() {
             .addHeading("Mermaid Diagram", 2)
             .addCodeBlock(gantt, "mermaid")
             .write();
-        await (0, pr_body_js_1.updatePrBody)(octokit, ctx.repo, pr, mermaidBlock);
+        if (publishToPr) {
+            await (0, pr_body_js_1.updatePrBody)(octokit, ctx.repo, pr, mermaidBlock);
+        }
+        else {
+            core.info("PR body update disabled (publish-to-pr=false)");
+        }
     }
     catch (err) {
         core.setFailed(err.message);

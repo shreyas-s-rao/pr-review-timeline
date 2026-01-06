@@ -31,6 +31,7 @@ async function run() {
     const pr = ctx.payload.pull_request;
     const action = (ctx.payload as any).action as string | undefined;
     const isClosedAction = action === "closed";
+    const publishToPr = core.getBooleanInput("publish-to-pr", { required: false });
 
     // Configurable skip: draft PRs
     const skipDraft = core.getBooleanInput("skip-draft", { required: false });
@@ -73,7 +74,11 @@ async function run() {
       .addCodeBlock(gantt, "mermaid")
       .write();
 
-    await updatePrBody(octokit, ctx.repo, pr, mermaidBlock);
+    if (publishToPr) {
+      await updatePrBody(octokit, ctx.repo, pr, mermaidBlock);
+    } else {
+      core.info("PR body update disabled (publish-to-pr=false)");
+    }
   } catch (err: any) {
     core.setFailed(err.message);
   }

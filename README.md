@@ -1,6 +1,6 @@
 # PR Review Timeline
 
-A GitHub Action that visualizes pull request review participation as a Mermaid Gantt chart directly in the PR description.
+A GitHub Action that visualizes pull request review participation as a Mermaid Gantt chart directly in the PR description, as well as in the Github Action Summary.
 
 Each reviewer appears as a single bar from the time they started participating (earliest of review requested, assignment, or first review) until the earliest of approval or PR merge; open PRs render to today. Same-day windows are normalized to one day.
 
@@ -9,7 +9,7 @@ Each reviewer appears as a single bar from the time they started participating (
 For each reviewer:
 
 - Start: earliest of review requested, assignment, or first review (drive-by)
-- End: earliest of approval or PR merged; else today
+- End: earliest of approval or PR merged/closed; else today
 - Same-day windows normalize to one day for correct rendering
 
 This answers one question clearly:
@@ -46,17 +46,21 @@ jobs:
   timeline:
     runs-on: ubuntu-latest
     permissions:
-      # Minimal permissions to update PR body and read contents
-      pull-requests: write
+      # Minimal permissions to read contents
       contents: read
+      # Set pull-requests: write only when you enable `publish-to-pr: true`
+      # Otherwise use pull-requests: read for compute-only runs
+      pull-requests: write
     steps:
-      - uses: shreyas-s-rao/pr-review-timeline@v0.1.5
+      - uses: shreyas-s-rao/pr-review-timeline@v0.2.0
         id: timeline
         with:
-          # Optional: override token (defaults to ${{ github.token }})
+          # Optional: override token (default: ${{ github.token }})
           github-token: ${{ secrets.MY_PAT }}
-          # Optional: skip draft PRs
+          # Optional: skip draft PRs (default: true)
           skip-draft: true
+          # Optional: publish Mermaid diagram to PR body (default: false)
+          publish-to-pr: true
         # Action outputs: timeline-json (reviewer windows), timeline-mermaid (diagram)
       - name: Output timeline JSON
         run: |
